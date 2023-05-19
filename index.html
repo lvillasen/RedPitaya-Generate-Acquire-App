@@ -308,7 +308,7 @@ period = 1 #s
 IP_BASE_ADDRESS = 0x40200000 # ASG
 ADDRESS_RANGE = 0x24
 regset = MMIO(IP_BASE_ADDRESS, ADDRESS_RANGE)
-while (1):
+for i in range(20):
     regset.write16(0,1) # Start DAC1 in 1-trig immediately configuration
     time.sleep(period)
     regset.write16(0,0)
