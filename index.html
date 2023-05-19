@@ -119,11 +119,6 @@ def wave():
     A2 = -.3
     A3 = -.5
     risetime = w/40
-    #x1 = w/2
-    #for x in range(w):
-    #    if x<x1:y = np.exp(-x/tau) 
-    #    else : y = .5*np.exp(-(x-x1)/tau) 
-    #    Y.append(-y)  
     for i in range(w):
         if i<T1:y = 0
         elif i<(T1 + risetime) :y = A1*(i-T1)/(risetime) 
@@ -275,7 +270,6 @@ for ptr in range(ptr_trig-50, ptr_trig+SIZE-50): # start plotting 50 samples bef
     if (counts >= 2**13):
         DATA_VOLT =  GAIN*((counts-2**13)/2**13 -1)
     dat.append(DATA_VOLT)
-    #print(",",DATA_VOLT,end=" ")
 regset.close()
 
 regset = MMIO(0x40000030, 0xc) # LEDs Display 0 when trigger is received
