@@ -91,7 +91,7 @@ function arm_trigger() {
 
             resp_array = resp.slice(",");
             document.getElementById("data_display_plot").innerHTML = myArray[1]+ " Number of Points: "+myArray.length;
-            console.log(resp_array);
+            //console.log(resp_array);
 
             X_data = [0];
             Y_data =[myArray[0].split("[")[1]]
