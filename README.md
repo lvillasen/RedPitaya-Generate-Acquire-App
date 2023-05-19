@@ -30,7 +30,9 @@ Open the file index.html with any browser and type the IP or rp-xxxxxx.local add
     
 Follow the instruccions on the web page
 
-    
+## Live Demo
+
+https://ciiec.buap.mx/RedPitaya-Generate-Acquire
     
 ## License
 
