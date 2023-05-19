@@ -1,6 +1,6 @@
 # RedPitaya Generate Acquire App
 Web app to control the Red Pitaya board using Node.js which is a back-end JavaScript runtime environment to 
-control the DACs with Arbitrary Signal Generation and the ADCs in single edge trigger mode.
+generate arbitrary signals with the fast DACs and acquire signals with the fast ADCs.
 
 
 ## Requisites
