@@ -15,8 +15,6 @@ app.get('/arm_trig/:id',   function (req, res) {
 
       res.type('text/plain');
       res.send(data);
-    }
-  });
    }); 
 
 
