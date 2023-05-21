@@ -14,7 +14,7 @@ app.get('/arm_trig/:id',   function (req, res) {
     const output = execSync('python3 Arm_Trigger.py ' + req.params.id, { encoding: 'utf-8' });
 
       res.type('text/plain');
-      res.send(data);
+      res.send(output);
    }); 
 
 
