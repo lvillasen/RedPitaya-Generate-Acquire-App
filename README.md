@@ -16,10 +16,10 @@ I used the following commands to install them:
     npm install express
     npm install cors
     
- It also requires the Python module Periphery
+ It also requires the Python Periphery module installed on the RedPitaya
  
-    pip install python-periphery installed on the RedPitaya
-
+    pip install python-periphery 
+    
 ## Usage
 
 Clone the repository
