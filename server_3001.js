@@ -15,12 +15,21 @@ app.get('/arm_trig/:id',   function (req, res) {
 
       res.type('text/plain');
       res.send(output);
-   }); 
+  });
+
+ app.get('/stop_DAC', function (req, res) {
+    console.log('7.STOP DAC received by server')
+    const output1 = execSync('monitor 0x40000030 0' , { encoding: 'utf-8' });
+    const output2 = execSync('monitor 0x40000030 7' , { encoding: 'utf-8' });
+    const output3 = execSync('monitor 0x40000030 0' , { encoding: 'utf-8' });
+
+    res.type('text/plain');
+    res.send("stop_DAC received by server");
+    const output4 = execSync('killall python3' , { encoding: 'utf-8' });
+});
 
 
 
 app.listen(3001, () => {
     console.log('App Server is listening on port 3001');
 });
-
-
