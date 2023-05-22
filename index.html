@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+    <title>Red Pitaya Node</title>
+    <script src="client.js"></script>
+    <link rel="stylesheet" href="./style.css">
+
+    <script src="https://unpkg.com/mathjs@11.8.0/lib/browser/math.js"></script>
+</head>
+
+<body>
+    <div class="block_container" style="background-color: #00b5e2; margin-left:5%; margin-right:5%;">
+        <p> </p>
+        <p> </p>
+        <br>
+
+        <h1> RedPitaya Generate and Acquire App </h1>
+
+
+        <h2> CIIEC-BUAP</h2>
+
+        <p style="font-size: 30px; margin-left: 80%;">May, 17th, 2023 </p>
+        <p style="font-size: 20px; margin-left: 80%;"><a href="https://github.com/lvillasen/RedPitaya-Generate-Acquire-App/">Source Code</a> </p>
+
+        <hr>
+
+        <p style="color:black;font-size:30px;">
+    This app illustrates a way to control a <a href="https://redpitaya.com/stemlab-125-14/">STEMlab 125-14 RedPitaya</a> board, shown in the picture below, with <a href="https://nodejs.org/en/about">Node.js </a>which is an open-source, cross-platform runtime environment that allows the development of front-end and back-end applications using JavaScript and  <a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction">Express </a> which is the most popular Node web framework. 
+            <br><br>
+
+    <center><img src="./redpitaya.png" alt="Trulli" width="50%"></center>
+    <p style="color:black;font-size:30px;">This app requires a RedPitaya board connected to the network and prepared according to <a href="https://redpitaya.readthedocs.io/en/latest/quickStart/quickStart.html">these instructions</a>. The additional software requisites  are described <a href="https://github.com/lvillasen/RedPitaya-Node-Express-App"> here</a>. The Python scripts used by this app to control the fast DACs and fast ADCs of the RedPitaya board use the <a href="https://github.com/vsergeev/python-periphery">Python-periphery</a> module to access the <a href="https://redpitaya.readthedocs.io/en/latest/developerGuide/software/build/fpga/regset_common.html">memory map</a> of the RedPitaya. These scripts are described in more detail <a href="https://github.com/lvillasen/RedPitaya-Signal-Generator-Python/"> here</a> and 
+        <a href="https://github.com/lvillasen/RedPitaya-Generate-Acquire/"> here</a>.
+<br>
+<br>
+        <font color="#ffff00">CAUTION</font>: Do not use this app simultaneously with any other RedPitaya app. Be extremely 
+        cautious when using this app as it executes general-purpose bash commands and Python scripts. If 
+        you share this app with someone when the node.js scripts are running on the RedPitaya, it is 
+        equivalent to sharing the RedPitaya password with that person.
+        
+        </p>
+        <hr>
+        <h2>1. Controlling the RedPitaya with Bash Commands</h2>
+    <p style="color:black;font-size:30px;">
+            The LED display of the RedPitaya is mapped to register 0x40000030. The LED display can be controlled by writing a number N to this register with the bash command: <i>monitor 0x40000030 N</i>.
+        </p>
+<label style="color:black;font-size:30px;">Input the IP or <i>rp-xxxxxx.local</i> label of the Redpitaya board: </label>
+        <input id="ip" style="font-size: 100%;" onchange="leds()" value="rp-f01e55.local" size=14 ;></input>
+<br>
+        <label style="color:black;font-size:30px;">Input a number from 0 to 255 to show on the LED display or leave empty and hit return: </label>
+        <input id="leds" style="font-size: 100%;" onchange="leds()" value="21" size=3 ;></input>
+        <div style="color:black;font-size:30px;" id="data_display_LEDs"></div>
+        <hr>
+ <div  id="block_container" style="text-align:center;margin: 3px solid;">
+<p  style="color:black;font-size:30px;"> Paste o Write Your Bash Commands Here</p>
+<textarea id="code_input_bash" style="width: 100%; white-space: pre; border:solid 5px #003b5c;"  rows="4" cols="120">
+monitor 0x40000030 20
+
+</textarea>
+ </div> 
+  <input  class="favorite styled" type="button" id="bash" value="Execute Bash Command" onclick="bash()">
+   <hr>
+
+        <h2>2. Controlling the LED Display with Python</h2>
+        <p style="color:black;font-size:30px;">
+            The following code illustrates the use of Python to control the LED display of the RedPitaya by accessing its memory map with the periphery module.
+        </p>
+
+        <div  id="block_container" style="text-align:center;margin: 3px solid;">
+<p  style="color:black;font-size:30px;"> Paste o Write Your Python Code Here</p>
+<textarea id="code_input_leds" style="width: 100%; white-space: pre; border:solid 5px #003b5c;"  rows="10" cols="120">
+import numpy as np
+import time
+from itertools import chain
+from periphery import MMIO
+regset = MMIO(0x40000030, 0xc)
+for i in chain( range(0,16), range(15,-1,-1) ):
+    regset.write32(0,i)
+    if (i> 0 and i%4 == 0): time.sleep(1)
+    else: time.sleep(.1)
+regset.close()
+
+
+</textarea>
+ </div> 
+
+ <input  class="favorite styled" type="button" id="start_stop" value="Run Python Script" onclick="leds_python()">
+   <hr>
+
+   <h2>3. Uploading an Arbitrary Signal to Memory</h2>
+
+<p style="color:black;font-size:30px;">
+            The following code illustrates the use of python to control the LED display of the RedPitaya by accessing its memory map with the periphery module.
+
+
+        </p>
+
+ <div  id="block_container" style="text-align:center;margin: 3px solid;">
+            <p style="color:black;font-size:30px;"> Paste o Write Your Python Code Here</p>
+
+<textarea id="code_input_upload" style="width: 100%; white-space: pre; border:solid 5px #003b5c;"  rows="20" cols="120">
+#!/usr/bin/python
+from periphery import MMIO
+import numpy as np
+######################################## # define arbitrary waveform
+def wave():
+    Y=[]
+    w = 2**14
+    tau = w/20
+    T1 = w/10
+    T2 = 4*T1
+    T3 = 8*T1
+    A1 = -1
+    A2 = -.3
+    A3 = -.5
+    risetime = w/40
+    for i in range(w):
+        if i<T1:y = 0
+        elif i<(T1 + risetime) :y = A1*(i-T1)/(risetime) 
+        elif i<T2 :y = A1*np.exp(-(i-T1)/tau) 
+        elif i<(T2 + risetime) :y = A2*(i-T2)/(risetime) 
+        elif i<T3: y = A1*np.exp(-(i-T1)/tau) + A2*np.exp(-(i-T2)/tau) 
+        elif i<(T3 + risetime) :y = A3*(i-T3)/(risetime) 
+        elif i<20000: y = A1*np.exp(-(i-T1)/tau) +A2*np.exp(-(i-T2)/tau) +A3*np.exp(-(i-T3)/tau)
+        Y.append(y) 
+    return Y
+######################################## Copy wave to memory register
+IP_BASE_ADDRESS = 0x40210000 #  memory data (16k samples)
+ADDRESS_RANGE = 0x1FFFC - 0x10000 # 65532 = 16k * 4
+regset = MMIO(IP_BASE_ADDRESS, ADDRESS_RANGE)
+V_ASG = wave()
+for adr in range(0,0x1FFFC-0x10000,0x4): # 65532, 0x10000 to 0x1FFFC for DAC1 0x20000 to 0x2FFFC for DAC2 
+    i=int(adr/4)
+    DATA_VOLT = V_ASG[i]
+    if (DATA_VOLT > 1): DATA_VOLT = 1
+    if (DATA_VOLT < -1): DATA_VOLT = -1
+    if (DATA_VOLT>=0):
+        DATA = int(np.round((DATA_VOLT)*2**13))-1
+    else:
+        DATA = int(np.round((1+DATA_VOLT)*2**13)+2**13) 
+    if (DATA > 2**14-1): DATA = 2**14-1
+    if (DATA < 0): DATA = 0
+    regset.write16(adr,DATA)
+regset.close()
+</textarea>
+        </div>
+
+        <input class="favorite styled" type="button" id="run_upload" value="Upload Signal" onclick="upload()">
+        <hr>
+
+   
+
+   <h2>4. Setting the Arbitrary Signal Generator</h2>
+
+<p style="color:black;font-size:30px;">
+            The following code illustrates the use of python to control the LED display of the RedPitaya by accessing its memory map with the periphery module.
+
+
+        </p>
+
+ <div  id="block_container" style="text-align:center;margin: 3px solid;">
+            <p style="color:black;font-size:30px;"> Paste o Write Your Python Code Here</p>
+
+<textarea id="code_input_settings" style="width: 100%; white-space: pre; border:solid 5px #003b5c;"  rows="20" cols="120">
+#!/usr/bin/python
+######################################## inputs
+CHANNEL = 1 # 1 
+f = 1000000 # Hz
+n_cycles = 1 # each cycle of 1 us
+n_replicas = 1
+delay = 1 # us after the end of the 2 cycles
+period = 1 # second
+########################################
+from periphery import MMIO
+import time
+import numpy as np
+IP_BASE_ADDRESS = 0x40200000 # ASG
+######################################## Stop DAC1
+ADDRESS_RANGE = 0x24
+regset = MMIO(IP_BASE_ADDRESS, ADDRESS_RANGE)
+regset.write16(0,0x80) # Stop DAC1
+######################################## calculate step
+BUFFER_SIZE=16384
+step = int(2**16 * f /(125000000 / BUFFER_SIZE))
+print ("Time per cycle =", 1/f, " us")
+######################################## write step for appropiate frequency
+regset.write32(0x10,step) # write new step
+######################################## configure burst structure 
+regset.write16(0x18,n_cycles) # number of read cycles in one burst
+regset.write16(0x1C,n_replicas) # number of burst repetitions 
+regset.write32(0x20,delay) # delay between burst repetitions in us
+regset.close()
+</textarea>
+        </div>
+
+        <input class="favorite styled" type="button" id="run_settings" value="Set ASG" onclick="settings()">
+   
+        <hr>
+ 
+
+      <h2>5. Transfering the Acquisition Script for the Fast ADCs</h2>
+
+<p style="color:black;font-size:30px;">
+            The following Python script arms the trigger to acquire data with the fast ADCs of the RedPitaya. By hitting the TRANSFER button the script is saved on the RedPitaya.
+
+
+        </p>
+
+       <div  id="block_container" style="text-align:center;margin: 3px solid;">
+<p  style="color:black;font-size:30px;"> Paste o Write Your Python Code Here</p>
+
+<textarea id="code_input_save" style="width: 100%; white-space: pre; border:solid 5px #003b5c;"  rows="20" cols="120">
+#!/usr/bin/python
+import sys
+import time
+job_number = sys.argv[1]
+print(job_number,",",end="")
+###################################inputs
+CHANNEL = 1 # 1 
+Trigger = -.1 # Volts 
+GAIN = 1 # +- 1 V, Select 1 or 20 according to your RP jumper LV or HV
+SIZE = 1000
+Trig_Point = 100 # start plotting this number of points before trigger
+###################################
+from periphery import MMIO
+import numpy as np
+
+if (Trigger > GAIN): Trigger = GAIN
+if (Trigger < -GAIN): Trigger = -GAIN
+if (Trigger>=0):
+    counts = int(np.round((Trigger/GAIN)*2**13)-1)
+else:
+    counts = int(np.round((1+Trigger/GAIN)*2**13)+2**13) 
+
+regset = MMIO(0x40000030, 0xc) # LEDs Display 255 while waiting for trigger
+regset.write32(0,255)
+regset.close()
+
+
+regset = MMIO(0x40100000, 0x1FFFC)
+regset.write16(0x4,3) # trigger source Ch A neg edge
+regset.write32(0x8,counts) # Trigger threshold
+#regset.write32(0x58,0) # Number of decimated data after trigger written into memory
+regset.write32(0x14,1) # decimation
+regset.write32(0x10,8000) # Number of decimated data after trigger written into memory
+#print("Wrote trigger treshold: ",counts, " counts")
+
+regset.write32(0x0,1) # arm trigger
+while(1):
+    time.sleep(.01) # to avoid saturating the RedPitaya CPUs
+    val = regset.read16(0)
+    if val > 1:  
+        break
+ptr_trig = regset.read32(0x1C)  #  pointer at trigger 
+print(Trig_Point," ,",end="")
+dat = []
+# CH1 Memory data (16k samples) from 0x10000 to 0x1FFFC
+for ptr in range(ptr_trig-Trig_Point, ptr_trig+SIZE-Trig_Point): # start plotting Trig_Point samples before trigger pointer
+    #if (ptr < 0): ptr += 16*1024
+    #if (ptr >= 16*1024): ptr -= 16*1024
+    mem_loc = (16*1024 + ptr)*4
+    if (mem_loc >= 0x1FFFC): mem_loc -= 0x10000
+#for i in range(16*1024 + (ptr_trig-50)*4,0x10000+ptr_trig*4 + SIZE*4,4): # start plotting 50 samples before trigger pointer
+    
+    counts = regset.read32(mem_loc)
+    if (counts < 2**13):
+        DATA_VOLT = GAIN*(counts+1)/2**13 
+    if (counts >= 2**13):
+        DATA_VOLT =  GAIN*((counts-2**13)/2**13 -1)
+    dat.append(DATA_VOLT)
+regset.close()
+
+regset = MMIO(0x40000030, 0xc) # LEDs Display 0 when trigger is received
+regset.write32(0,0)
+regset.close()
+print(dat)
+</textarea>
+ 
+       
+ </div> 
+
+ <input  class="favorite styled" type="button" id="start_stop" value="Save DAQ Script" onclick="save_arm_trigger()">
+   <hr>
+     <h2>6. Starting/Stopping the Arbitrary Signal Generator </h2>
+
+<p style="color:black;font-size:30px;">
+            The following Python script starts the DAC to generate the arbitrary waveform defined previously.
+
+
+        </p>
+
+       <div  id="block_container" style="text-align:center;margin: 3px solid;">
+<p  style="color:black;font-size:30px;"> Paste o Write Your Python Code to Start the ASG Here.</p>
+
+<textarea id="code_input_start_DAC" style="width: 100%; white-space: pre; border:solid 5px #003b5c;"  rows="12" cols="120">
+#!/usr/bin/python 
+from periphery import MMIO
+import time
+period = 1 #s
+IP_BASE_ADDRESS = 0x40200000 # ASG
+ADDRESS_RANGE = 0x24
+regset = MMIO(IP_BASE_ADDRESS, ADDRESS_RANGE)
+while (1):
+    regset.write16(0,1) # Start DAC1 in 1-trig immediately configuration
+    time.sleep(period)
+    regset.write16(0,0)
+regset.close()
+
+</textarea>
+ 
+       
+ </div> 
+
+ <input  class="favorite styled" type="button"  value="Start ASG" onclick="start_DAC()">
+  <input  class="favorite styled" type="button"  value="Stop ASG" onclick="stop_DAC()">
+
+   <hr>
+ 
+   <h2>7. Starting/Stopping the Acquisition Script for the Fast ADCs</h2>
+
+<p style="color:black;font-size:30px;">
+            Here we execute the acquisition code saved previously.
+
+<br>
+    
+                  <input class="favorite styled" type="button" id="single" value="SINGLE" onclick="single()">
+
+                <label>Trigger Mode:</label>
+
+                <input class="favorite styled" type="button" id="arm_trigger" value="OFF" onclick="trigger()">
+ </p>
+   <hr>
+<div  id="block_container">        
+<div id="plot1" style= "border:solid 5px #003b5c"></div>
+    </div> 
+    <div style="color:black;font-size:30px;" id="data_display_plot"></div>
+
+
+        <hr>
+  <h2>8. Other Options Using C</h2>
+
+<p style="color:black;font-size:30px;">
+            Other possibilities are to compile the following C code taken from <a href="https://github.com/lvillasen/RedPitaya-Signal-Generator-Python/"> here</a>  to control the DACs.
+
+            <div  id="block_container" style="text-align:center;margin: 3px solid;">
+<p  style="color:black;font-size:30px;"> Paste o Write Your C Code Here</p>
+
+<textarea  style="width: 100%; white-space: pre; border:solid 5px #003b5c;"  rows="20" cols="120">
+// generate_BURST.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include<unistd.h>
+#include "mmio.h"
+#include<stdio.h>
+#include<math.h>
+double PI = 3.14159265358979323846;
+unsigned int  BUFFER_SIZE = 16384;
+//######################################## inputs
+//CHANNEL = 1 # 1
+//########################################
+float fun(unsigned int x)         // function definition
+{
+    double f;
+    f = sin(2*PI*x/BUFFER_SIZE);
+    return f;
+}
+int v_to_counts(float voltage)
+{
+    unsigned int  adc_cnts ;
+    if(voltage > 1.0) voltage = 1.0;
+if (voltage < -1.0) voltage = -1.0;
+    if(voltage >= 0)
+        adc_cnts = (int)round(voltage*pow(2,13)-1);
+    else
+        adc_cnts = (int)round((1+voltage)*pow(2,13)+pow(2,13));
+    return adc_cnts;
+}
+int main(int argc, char **argv) {
+    float AMPLITUDE =1.0;
+    float  FREQUENCY = 1.0;
+    unsigned int N_CYCLES = 2;
+    unsigned int N_REPLICAS = 2;
+    unsigned int DELAY = 10;
+    unsigned int  PERIOD = 1000; // in ms
+//    for (int i=0; i<argc; i++) printf ("%s\n", argv[i]);
+if (argc == 7) {
+        AMPLITUDE =   atof(argv[1]);
+        FREQUENCY = atof(argv[2]) ; // MHz
+        N_CYCLES = strtol(argv[3], NULL, 0);
+        N_REPLICAS = strtol(argv[4], NULL, 0);
+        DELAY = strtol(argv[5], NULL, 0);
+        PERIOD = strtol(argv[6],NULL, 0);
+    } else {
+printf("Usage: generate_BURST amplitude(volt) frequency(MHz) n_cycles n_replicas delay(us or 0 for continuous mode) period(ms)  \n");
+printf("Define your arbitrary function in the program, default is Sine  \n");
+return -1;}
+    mmio_t *mmio;
+    mmio = mmio_new();
+    if (mmio_open(mmio, 0x40200000, 0x1FFFC) < 0) {
+        fprintf(stderr, "mmio_open(): %s\n", mmio_errmsg(mmio));
+        exit(1);
+    }
+
+    mmio_write32(mmio, 0, 0x80); // stop DAC1
+    unsigned int step = (int) (pow(2,16) * FREQUENCY /125 * BUFFER_SIZE);
+    mmio_write32(mmio, 0x10,step); // write step
+    mmio_write32(mmio, 0x18, N_CYCLES); // number of read cycles in one burst
+    mmio_write32(mmio, 0x1C, N_REPLICAS); // number of burst repetitions
+    mmio_write32(mmio, 0x20, DELAY); // delay between burst repetitions in us
+    for (unsigned int offset_addr = 0x10000; offset_addr < 0x10000 + (int)BUFFER_SIZE*4 ; offset_addr+= 4)
+    {
+    mmio_write32(mmio, offset_addr,v_to_counts(AMPLITUDE*fun((int)offset_addr/4))); // copy wave to memory register
+    }
+    mmio_write32(mmio, 0,1); // start DAC1 in 1-trig immediately configuration
+    int n = 0;
+    while(DELAY >0) {
+    n += 1 ;
+    mmio_write32(mmio, 0,1); // start DAC1 in 1-trig immediately configuration
+    usleep(PERIOD*1000);
+    mmio_write32(mmio, 0,0); //
+    }
+    mmio_close(mmio);
+    mmio_free(mmio);
+    return 0;
+}
+</textarea>
+ 
+       
+ </div> 
+
+ <p style="color:black;font-size:30px;">
+            And execute the bash command:
+<br>
+            <br>
+
+            <em> generate_BURST amplitude(volt) frequency(MHz) n_cycles n_replicas delay(us or 0 for continuous mode) period(ms)  
+</em>
+<br>
+<br>
+on the text area of Section 1. Or the following code that controls the ADCs also taken from <a href="https://github.com/lvillasen/RedPitaya-Signal-Generator-Python/"> here</a>
+</p>
+
+      
+
+       <div  id="block_container" style="text-align:center;margin: 3px solid;">
+
+<textarea style="width: 100%; white-space: pre; border:solid 5px #003b5c;"  rows="20" cols="120">
+// acquire_SINGLE.c
+#include <stdio.h>                                                                                                                                
+#include <stdlib.h>                                                                                                                               
+#include <stdint.h>                                                                                                                               
+                                                                                                                                                  
+#include "mmio.h"  
+
+#include<stdio.h>
+#include<math.h>
+#define GAIN 20.0 
+//#define GAIN 1.0 
+//######################################## inputs
+//CHANNEL = 1 # 1 
+//########################################
+int v_to_counts(float voltage)
+{
+    unsigned int  adc_cnts ;
+    if(voltage > GAIN) voltage = GAIN;
+if (voltage < -GAIN) voltage = -GAIN;
+    if(voltage >= 0) 
+        adc_cnts = (int)round(voltage/GAIN*pow(2,13)-1);
+    else
+        adc_cnts = (int)round((1+voltage/GAIN)*pow(2,13)+pow(2,13));
+    return adc_cnts;
+} 
+
+float counts_to_v(unsigned int counts)
+{    
+    float voltage;
+    if(counts > pow(2,14)-1) counts = pow(2,14)-1;
+    if(counts <pow(2,13)) 
+        voltage = GAIN*(counts+1)/pow(2,13); 
+    else 
+        voltage =  GAIN*((counts-pow(2,13))/pow(2,13) -1);
+    return voltage;
+}
+int main(int argc, char **argv) {                                                                                                                 
+    int i;                                                                                                                                        
+    uint32_t addr;                                                                                                                                
+    uint32_t  value_r, value_w, SIZE, ptr_trig;                                                                                                                 
+    float TRIGGER_TRES;                                                                                                                                         
+   // for (i=0; i<argc; i++) printf ("%s\n", argv[i]);                                                                                            
+    if (argc == 3) { 
+        SIZE = strtol(argv[1], NULL, 0);
+        TRIGGER_TRES =   atof(argv[2]);  
+    }  else {
+        SIZE = 1024 ; 
+        TRIGGER_TRES = -0.5 ;
+    }  
+    //printf ("Size = %d Trigger Treshold = %3.4f \n",SIZE,TRIGGER_TRES);
+                                                                                                                                      
+    mmio_t *mmio;                                                                                                                                 
+                                                                                                                                                  
+    mmio = mmio_new();                                                                                                                            
+                                                                                                                
+    /* Open control module */                                                                                                                     
+    if (mmio_open(mmio, 0x40100000, 0x1FFFC) < 0) {                                                                                                         
+        fprintf(stderr, "mmio_open(): %s\n", mmio_errmsg(mmio));                                                                                  
+        exit(1);                                                                                                                                  
+    }   
+  // mmio_write32(mmio, 0, 2); // reset write state machine
+    mmio_write16(mmio, 0x4, 3); // 2-ch A threshold positive edge
+    mmio_write32(mmio, 0x8,v_to_counts(TRIGGER_TRES)); // Ch A threshold
+   mmio_write32(mmio, 0x14, 1); // decimation
+   mmio_write32(mmio, 0x10, 8000); // decimation
+   //printf ("Trigger treshold set at %3.4f  = %d \n",TRIGGER_TRES,v_to_counts(TRIGGER_TRES));
+    mmio_write32(mmio, 0x0,1); // arm trigger
+    //sleep(5);
+    while(1) {    
+        mmio_read32(mmio, 0, &value_r); // trigger status
+    //printf("%d ",value_r);     
+                if (value_r > 5)
+        {   
+                   // mmio_write32(mmio, 0, 2); // reset write state machine
+     //             printf("Trigger status: %d\n",value_r);
+                        break;
+                 }  
+    }
+mmio_read32(mmio,0x1C, &ptr_trig);
+ptr_trig -= 50; // start 50 samples before trigger pointer
+                  //printf("Trigger status: %d ptr_trig: %d\n",value_r,ptr_trig);
+    for (uint32_t offset_addr = 0x10000+ptr_trig*4 ; offset_addr < 0x10000+ptr_trig*4 + SIZE*4 ; offset_addr+= 4)  {
+mmio_read32(mmio,offset_addr, &value_r);
+printf ("%3.4f\n",counts_to_v(value_r));
+
+       } 
+    mmio_close(mmio);                                                                                                                             
+    mmio_free(mmio);                                                                                                                              
+    return 0;                                                                                                                                     
+} 
+</textarea>
+ 
+       
+ </div> 
+
+ <p  style="color:black;font-size:30px;"> These C programs can be compiled with the command:
+<br>
+<br>
+<em> gcc xxx.c mmio.c -lm -o xxx </em>
+<br>
+<br>
+These options require minor modifications of the JavaScript code given here.
+
+ </p>
+
+  
+<br><br>
+</body>
