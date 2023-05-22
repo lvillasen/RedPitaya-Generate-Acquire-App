@@ -32,7 +32,7 @@ On a Red Pitaya terminal cd to that folder and make the bash script start.sh exe
     
 Open the file index.html with any browser and type the IP or rp-xxxxxx.local address of your RedPitaya Board
     
-Follow the instruccions on the web page
+Connect ADC1 to DAC1 and follow the instruccions on the web page
 
 ## Web Page
 
