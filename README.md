@@ -15,6 +15,10 @@ I used the following commands to install them:
     cp -R * /usr/local/
     npm install express
     npm install cors
+    
+ It also requires the Python module Periphery
+ 
+    pip install python-periphery
 
 ## Usage
 
@@ -33,6 +37,10 @@ Follow the instruccions on the web page
 ## Web Page
 
 https://ciiec.buap.mx/RedPitaya-Generate-Acquire
+
+## Credits
+
+This app make extensive use of the Python module called Periphery: https://github.com/vsergeev/python-periphery
     
 ## License
 
