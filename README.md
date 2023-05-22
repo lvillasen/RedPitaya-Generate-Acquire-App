@@ -18,7 +18,7 @@ I used the following commands to install them:
     
  It also requires the Python module Periphery
  
-    pip install python-periphery
+    pip install python-periphery installed on the RedPitaya
 
 ## Usage
 
