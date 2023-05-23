@@ -24,10 +24,11 @@ I used the following commands to install them:
 
 Clone the repository
     
-Copy the files server_3000.js, server_3001.js, server_3002.js and start.sh to any folder of the Red Pitaya board
+Copy the files server_3000.js, server_3001.js and start.sh to any folder of the Red Pitaya board
     
-On a Red Pitaya terminal cd to that folder and make the bash script start.sh executable then type: 
+On a Red Pitaya terminal cd to that folder and type: 
 
+    chmod a+x start.sh
     ./start.sh
     
 Open the file index.html with any browser and type the IP or rp-xxxxxx.local address of your RedPitaya Board
